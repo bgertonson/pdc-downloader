@@ -67,7 +67,7 @@ namespace PdcDownloader
                     Console.WriteLine(context.PercentComplete == 100 ? " Done! " : " Canceled! ");
                 }
             }
-            Console.WriteLine(context.ShouldAbort ? "Foced Complete" : "Complete");
+            Console.WriteLine(context.ShouldAbort ? "Forced Complete" : "Complete");
         }
 
         private static String getExtension(string url)
