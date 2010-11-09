@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="b59f6b80-c653-4d11-8aa6-66b455f78f2c" xmlns="urn:schemas-microsoft-com:xml-dataservicemap">
+  <MetadataSources>
+    <MetadataSource Address="http://odata.microsoftpdc.com/ODataSchedule.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="service.edmx" MetadataType="Edmx" ID="bb094307-fda9-4b0d-be96-998e0a2d7f05" SourceId="1" SourceUrl="http://odata.microsoftpdc.com/ODataSchedule.svc" />
+  </Metadata>
+  <Extensions />
+</ReferenceGroup>
