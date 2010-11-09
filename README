@@ -1,0 +1,14 @@
+A console application that downloads the power point and video presentations from PDC 2010.
+
+Example Commandline
+
+pdcdownloader wmvhigh
+
+This will download the powerpoint files and the high quality wmv files.
+
+Other video options:
+wmvhigh
+wmvlow (default)
+mp4high
+mp4low
+
