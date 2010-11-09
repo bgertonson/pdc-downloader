@@ -15,7 +15,7 @@ namespace PdcDownloader
         {
             var videoQuality = args.Length > 0 ? (VideoQuality) args[0] : VideoQuality.WMVLOW;
 
-            var patternsToDownload = new[] {".pptx", videoQuality.Pattern};
+            var patternsToDownload = videoQuality.Pattern.Union(new[] {".pptx"});
             var context = ApplicationContext.Current;
             var spinner = new[] {"|", "/", "-", "\\"};
             var badChars = new[] {"\\", "/", "<", ">", "|", "?", "*", ":", "\""};
@@ -29,7 +29,7 @@ namespace PdcDownloader
                 {
                     if (context.ShouldAbort) break;
                     var currentItem = c;
-                    if (!patternsToDownload.Any(e => currentItem.Url.EndsWith(e))) continue;
+                    if (!patternsToDownload.Any(e => currentItem.Url.EndsWith(e, StringComparison.CurrentCultureIgnoreCase))) continue;
                     var extension = getExtension(currentItem.Url);
 
                     var title = badChars.Aggregate(s.FullTitle, (t, replace) => t.Replace(replace, ""));
@@ -130,10 +130,10 @@ namespace PdcDownloader
 
         public string Key { get; private set; }
         public string Name { get; private set; }
-        public string Pattern { get; private set; }
+        public string[] Pattern { get; private set; }
         public string Extension { get; private set; }
 
-        public VideoQuality(string key, string name, string pattern, string extension)
+        public VideoQuality(string key, string name, string[] pattern, string extension)
         {
             Key = key;
             Name = name;
@@ -141,7 +141,7 @@ namespace PdcDownloader
             Extension = extension;
         }
 
-        private static VideoQuality AddVideoQuality(string key, string name, string pattern, string extension)
+        private static VideoQuality AddVideoQuality(string key, string name, string[] pattern, string extension)
         {
             var q = new VideoQuality(key, name, pattern, extension);
             _qualityTypes.Add(q);
@@ -159,9 +159,9 @@ namespace PdcDownloader
             return quality.Key;
         }
 
-        public static VideoQuality WMVHIGH = AddVideoQuality("WMVHIGH", "HD WMV", "2500k.wmv", "wmv");
-        public static VideoQuality WMVLOW = AddVideoQuality("WMVLOW", "Low Bitrate WMV", "1000k.wmv", "wmv");
-        public static VideoQuality MP4HIGH = AddVideoQuality("MP4HIGH", "HD MP4", "2500k.mp4", "mp4");
-        public static VideoQuality MP4LOW = AddVideoQuality("MP4LOW", "Low Bitrate Mp4", "750k.mp4", "mp4");
+        public static VideoQuality WMVHIGH = AddVideoQuality("WMVHIGH", "HD WMV", new[]{"high.wmv", "2500k.wmv"}, "wmv");
+        public static VideoQuality WMVLOW = AddVideoQuality("WMVLOW", "Low Bitrate WMV", new[]{"low.wmv","1000k.wmv"}, "wmv");
+        public static VideoQuality MP4HIGH = AddVideoQuality("MP4HIGH", "HD MP4", new[]{"high.wmv","2500k.mp4"}, "mp4");
+        public static VideoQuality MP4LOW = AddVideoQuality("MP4LOW", "Low Bitrate Mp4", new[]{"low.mp4","750k.mp4"}, "mp4");
     }
 }
