@@ -65,7 +65,7 @@ namespace PdcDownloader
                     }
                     Console.CursorLeft -= 6;
                     if(context.Skip) File.Delete(filename);
-                    Console.WriteLine(context.Skip ? " Done! " : " Canceled! ");
+                    Console.WriteLine(context.Skip ? " Canceled! " : " Done! ");
                 }
             }
             Console.WriteLine(context.ShouldAbort ? "Forced Complete" : "Complete");
