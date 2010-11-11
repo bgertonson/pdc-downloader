@@ -54,17 +54,18 @@ namespace PdcDownloader
                         switch(keyInfo.Key)
                         {
                             case ConsoleKey.S:
+                                context.SkipFile();
                                 client.CancelAsync();
                                 break;
                             case ConsoleKey.Q:
+                                context.Abort();
                                 client.CancelAsync();
-                                context.ShouldAbort = true;
                                 break;
                         }
                     }
                     Console.CursorLeft -= 6;
-                    if(context.PercentComplete != 100) File.Delete(filename);
-                    Console.WriteLine(context.PercentComplete == 100 ? " Done! " : " Canceled! ");
+                    if(context.Skip) File.Delete(filename);
+                    Console.WriteLine(context.Skip ? " Done! " : " Canceled! ");
                 }
             }
             Console.WriteLine(context.ShouldAbort ? "Forced Complete" : "Complete");
@@ -92,6 +93,7 @@ namespace PdcDownloader
     public class ApplicationContext
     {
         public bool ShouldAbort { get; set; }
+        public bool Skip { get; set; }
         public bool IsReadyToDownload { get; set; }
         public int PercentComplete { get; set; }
 
@@ -107,8 +109,20 @@ namespace PdcDownloader
         public void Reset()
         {
             IsReadyToDownload = true;
+            Skip = false;
             ShouldAbort = false;
             PercentComplete = 0;
+        }
+
+        public void SkipFile()
+        {
+            Skip = true;
+        }
+
+        public void Abort()
+        {
+            ShouldAbort = true;
+            Skip = true;
         }
 
         public void Complete()
@@ -120,6 +134,7 @@ namespace PdcDownloader
         {
             PercentComplete = 0;
             IsReadyToDownload = false;
+            Skip = false;
         }
     }
 
