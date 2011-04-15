@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="9909af6c-7648-40f7-91e5-d6fa5c6736cf" xmlns="urn:schemas-microsoft-com:xml-dataservicemap">
+  <MetadataSources>
+    <MetadataSource Address="http://live.visitmix.com/odata" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="service.edmx" MetadataType="Edmx" ID="31484af1-19df-450c-8860-c3d78be0777d" SourceId="1" SourceUrl="http://live.visitmix.com/odata" />
+  </Metadata>
+  <Extensions />
+  <Parameters>
+    <Parameter Name="UseDataServiceCollection" Value="false" />
+    <Parameter Name="Version" Value="1.0" />
+  </Parameters>
+</ReferenceGroup>

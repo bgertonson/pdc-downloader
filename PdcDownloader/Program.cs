@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -13,35 +12,43 @@ namespace PdcDownloader
     {
         static void Main(string[] args)
         {
-            var videoQuality = args.Length > 0 ? (VideoQuality) args[0] : VideoQuality.WMVLOW;
+            if(args.Length < 1)
+            {
+                Console.WriteLine("You must say which videos you want to download (MIX11, PDC10)");
+                return;
+            }
+            var providerKey = args[0];
+            var videoQuality = args.Length > 1 ? (VideoQuality) args[1] : VideoQuality.WMVLOW;
 
-            var patternsToDownload = videoQuality.Pattern.Union(new[] {".pptx"});
             var context = ApplicationContext.Current;
             var spinner = new[] {"|", "/", "-", "\\"};
             var badChars = new[] {"\\", "/", "<", ">", "|", "?", "*", ":", "\""};
             var spinnerIndex = 0;
-            var service = new PDC.ScheduleModel(new Uri("http://odata.microsoftpdc.com/ODataSchedule.svc"));
-            foreach (var s in service.Sessions.Expand("DownloadableContent").ToList())
+
+            var provider = DownloadQueueProviderRegistry.Lookup(providerKey);
+
+            if(provider == null)
+            {
+                Console.WriteLine("There is no provider for videos from '{0}'", providerKey);
+            }
+
+            foreach (var s in provider.GetQueue(videoQuality))
             {
                 if (context.ShouldAbort) break;
                 //Console.WriteLine(s.FullTitle);
-                foreach(var c in s.DownloadableContent)
-                {
                     if (context.ShouldAbort) break;
-                    var currentItem = c;
-                    if (!patternsToDownload.Any(e => currentItem.Url.EndsWith(e, StringComparison.CurrentCultureIgnoreCase))) continue;
-                    var extension = getExtension(currentItem.Url);
+                    var extension = getExtension(s.Url);
 
-                    var title = badChars.Aggregate(s.FullTitle, (t, replace) => t.Replace(replace, ""));
+                    var title = badChars.Aggregate(s.Name, (t, replace) => t.Replace(replace, ""));
                     var filename = String.Format("{0}.{1}", title, extension);
                     if (File.Exists(filename)) continue;
                     var client = new WebClient();
                     client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(ClientDownloadProgressChanged);
                     client.DownloadFileCompleted += new AsyncCompletedEventHandler(ClientDownloadFileCompleted);
                     
-                    client.DownloadFileAsync(new Uri(c.Url), filename, null);
+                    client.DownloadFileAsync(new Uri(s.Url), filename, null);
 
-                    Console.Write("Downloading [{1}] {0}...    0%", s.FullTitle.Substring(0, Math.Min(s.FullTitle.Length, 45)), extension.ToUpper());
+                    Console.Write("Downloading [{1}] {0}...    0%", s.Name.Substring(0, Math.Min(s.Name.Length, 45)), extension.ToUpper());
                     context.StartDownload();
                     while(!context.IsReadyToDownload)
                     {
@@ -66,7 +73,7 @@ namespace PdcDownloader
                     Console.CursorLeft -= 6;
                     if(context.Skip) File.Delete(filename);
                     Console.WriteLine(context.Skip ? " Canceled! " : " Done! ");
-                }
+                
             }
             Console.WriteLine(context.ShouldAbort ? "Forced Complete" : "Complete");
         }
@@ -136,47 +143,5 @@ namespace PdcDownloader
             IsReadyToDownload = false;
             Skip = false;
         }
-    }
-
-
-    public class VideoQuality
-    {
-        private static List<VideoQuality> _qualityTypes = new List<VideoQuality>();
-
-        public string Key { get; private set; }
-        public string Name { get; private set; }
-        public string[] Pattern { get; private set; }
-        public string Extension { get; private set; }
-
-        public VideoQuality(string key, string name, string[] pattern, string extension)
-        {
-            Key = key;
-            Name = name;
-            Pattern = pattern;
-            Extension = extension;
-        }
-
-        private static VideoQuality AddVideoQuality(string key, string name, string[] pattern, string extension)
-        {
-            var q = new VideoQuality(key, name, pattern, extension);
-            _qualityTypes.Add(q);
-            return q;
-        }
-
-        public static implicit operator VideoQuality(string key)
-        {
-            var result = _qualityTypes.FirstOrDefault(q => q.Key.Equals(key, StringComparison.CurrentCultureIgnoreCase));
-            return result ?? VideoQuality.WMVLOW;
-        }
-
-        public static implicit operator string(VideoQuality quality)
-        {
-            return quality.Key;
-        }
-
-        public static VideoQuality WMVHIGH = AddVideoQuality("WMVHIGH", "HD WMV", new[]{"high.wmv", "2500k.wmv"}, "wmv");
-        public static VideoQuality WMVLOW = AddVideoQuality("WMVLOW", "Low Bitrate WMV", new[]{"low.wmv","1000k.wmv"}, "wmv");
-        public static VideoQuality MP4HIGH = AddVideoQuality("MP4HIGH", "HD MP4", new[]{"high.wmv","2500k.mp4"}, "mp4");
-        public static VideoQuality MP4LOW = AddVideoQuality("MP4LOW", "Low Bitrate Mp4", new[]{"low.mp4","750k.mp4"}, "mp4");
     }
 }

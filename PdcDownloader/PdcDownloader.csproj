@@ -44,27 +44,47 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DownloadQueueItem.cs" />
+    <Compile Include="IDownloadQueueProvider.cs" />
+    <Compile Include="Mix11DownloadQueueProvider.cs" />
+    <Compile Include="PdcDownloadQueueProvider.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service References\Mix11\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.datasvcmap</DependentUpon>
+    </Compile>
     <Compile Include="Service References\PDC\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.datasvcmap</DependentUpon>
     </Compile>
+    <Compile Include="VideoQuality.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <ServiceReferenceMetadataStorage Include="Service References\Mix11\">
+      <Type>datasvcmap</Type>
+    </ServiceReferenceMetadataStorage>
     <ServiceReferenceMetadataStorage Include="Service References\PDC\">
       <Type>datasvcmap</Type>
     </ServiceReferenceMetadataStorage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Service References\Mix11\service.edmx" />
     <None Include="Service References\PDC\service.edmx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Service References\PDC\Reference.datasvcmap">
+      <Generator>DataServiceClientGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\Mix11\Reference.datasvcmap">
       <Generator>DataServiceClientGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

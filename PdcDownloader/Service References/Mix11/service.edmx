@@ -1,0 +1,96 @@
+﻿<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="2.0">
+    <Schema Namespace="eventsModel" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+      <EntityType Name="Session">
+        <Key>
+          <PropertyRef Name="SessionID" />
+        </Key>
+        <Property Name="SessionID" Type="Edm.Int32" Nullable="false" p8:StoreGeneratedPattern="Identity" xmlns:p8="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="EventCode" Type="Edm.String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+        <Property Name="SessionCode" Type="Edm.String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+        <Property Name="SessionTypeCode" Type="Edm.String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+        <Property Name="Level" Type="Edm.Int16" Nullable="true" />
+        <Property Name="Abstract" Type="Edm.String" Nullable="true" MaxLength="Max" Unicode="false" FixedLength="false" m:FC_TargetPath="SyndicationSummary" m:FC_KeepInContent="false" />
+        <Property Name="PublishFlag" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Title" Type="Edm.String" Nullable="false" MaxLength="375" Unicode="true" FixedLength="false" m:FC_TargetPath="SyndicationTitle" m:FC_KeepInContent="false" />
+        <Property Name="Room" Type="Edm.String" Nullable="true" MaxLength="75" Unicode="false" FixedLength="false" />
+        <Property Name="StartTime" Type="Edm.DateTime" Nullable="true" />
+        <Property Name="Duration" Type="Edm.Int32" Nullable="true" />
+        <NavigationProperty Name="Speakers" Relationship="eventsModel.SessionSpeaker" FromRole="Session" ToRole="Speaker" />
+        <NavigationProperty Name="Tags" Relationship="eventsModel.SessionTag" FromRole="Session" ToRole="Tag" />
+        <NavigationProperty Name="Files" Relationship="eventsModel.FK_File_Session" FromRole="Session" ToRole="File" />
+      </EntityType>
+      <EntityType Name="Speaker" m:HasStream="true">
+        <Key>
+          <PropertyRef Name="SpeakerID" />
+        </Key>
+        <Property Name="SpeakerID" Type="Edm.Int32" Nullable="false" p9:StoreGeneratedPattern="Identity" xmlns:p9="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="FirstName" Type="Edm.String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" m:FC_TargetPath="SyndicationTitle" m:FC_KeepInContent="false" />
+        <Property Name="LastName" Type="Edm.String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+        <Property Name="Bio" Type="Edm.String" Nullable="true" MaxLength="Max" Unicode="false" FixedLength="false" m:FC_TargetPath="SyndicationSummary" m:FC_KeepInContent="false" />
+        <Property Name="PhotoUri" Type="Edm.String" Nullable="true" MaxLength="255" Unicode="true" FixedLength="false" />
+        <Property Name="Notes" Type="Edm.String" Nullable="true" MaxLength="Max" Unicode="false" FixedLength="false" />
+        <Property Name="ExternalSpeaker" Type="Edm.Boolean" Nullable="false" />
+        <NavigationProperty Name="Sessions" Relationship="eventsModel.SessionSpeaker" FromRole="Speaker" ToRole="Session" />
+      </EntityType>
+      <EntityType Name="Tag">
+        <Key>
+          <PropertyRef Name="TagID" />
+        </Key>
+        <Property Name="TagID" Type="Edm.Int32" Nullable="false" p8:StoreGeneratedPattern="Identity" xmlns:p8="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="TagValue" Type="Edm.String" Nullable="false" MaxLength="100" Unicode="true" FixedLength="false" />
+        <NavigationProperty Name="Sessions" Relationship="eventsModel.SessionTag" FromRole="Tag" ToRole="Session" />
+      </EntityType>
+      <EntityType Name="File" m:HasStream="true">
+        <Key>
+          <PropertyRef Name="FileID" />
+        </Key>
+        <Property Name="FileID" Type="Edm.Int32" Nullable="false" p9:StoreGeneratedPattern="Identity" xmlns:p9="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+        <Property Name="MimeType" Type="Edm.String" Nullable="false" MaxLength="75" Unicode="true" FixedLength="false" />
+        <Property Name="FileUri" Type="Edm.String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+        <Property Name="SessionID" Type="Edm.Int32" Nullable="false" />
+        <NavigationProperty Name="Session" Relationship="eventsModel.FK_File_Session" FromRole="File" ToRole="Session" />
+      </EntityType>
+      <Association Name="SessionSpeaker">
+        <End Role="Session" Type="eventsModel.Session" Multiplicity="*" />
+        <End Role="Speaker" Type="eventsModel.Speaker" Multiplicity="*" />
+      </Association>
+      <Association Name="SessionTag">
+        <End Role="Session" Type="eventsModel.Session" Multiplicity="*" />
+        <End Role="Tag" Type="eventsModel.Tag" Multiplicity="*" />
+      </Association>
+      <Association Name="FK_File_Session">
+        <End Role="Session" Type="eventsModel.Session" Multiplicity="1" />
+        <End Role="File" Type="eventsModel.File" Multiplicity="*" />
+        <ReferentialConstraint>
+          <Principal Role="Session">
+            <PropertyRef Name="SessionID" />
+          </Principal>
+          <Dependent Role="File">
+            <PropertyRef Name="SessionID" />
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+    </Schema>
+    <Schema Namespace="Orchard.Web.ODataSvc" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+      <EntityContainer Name="eventsEntities" p7:LazyLoadingEnabled="true" m:IsDefaultEntityContainer="true" xmlns:p7="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+        <EntitySet Name="Sessions" EntityType="eventsModel.Session" />
+        <EntitySet Name="Speakers" EntityType="eventsModel.Speaker" />
+        <EntitySet Name="Tags" EntityType="eventsModel.Tag" />
+        <EntitySet Name="Files" EntityType="eventsModel.File" />
+        <AssociationSet Name="SessionSpeaker" Association="eventsModel.SessionSpeaker">
+          <End Role="Session" EntitySet="Sessions" />
+          <End Role="Speaker" EntitySet="Speakers" />
+        </AssociationSet>
+        <AssociationSet Name="SessionTag" Association="eventsModel.SessionTag">
+          <End Role="Session" EntitySet="Sessions" />
+          <End Role="Tag" EntitySet="Tags" />
+        </AssociationSet>
+        <AssociationSet Name="FK_File_Session" Association="eventsModel.FK_File_Session">
+          <End Role="Session" EntitySet="Sessions" />
+          <End Role="File" EntitySet="Files" />
+        </AssociationSet>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>
