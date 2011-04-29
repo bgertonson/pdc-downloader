@@ -11,12 +11,12 @@ namespace PdcDownloader
             var q = (Mix11VideoQuality) quality.Key;
 
             var service = new Mix11.eventsEntities(new Uri(@"http://live.visitmix.com/odata"));
-            var items = service.Sessions.Expand("Files").ToList();
+            var items = service.Sessions.ToList();
             var vidQueue = items.Select(
                     s => new DownloadQueueItem() {Name = s.SessionCode, Url = String.Format(q.UrlFormat, s.SessionCode)}).
                     ToList();
             var pptQueue =
-                service.Sessions.Execute().Select(
+                service.Sessions.ToList().Select(
                     s =>
                     new DownloadQueueItem()
                         {

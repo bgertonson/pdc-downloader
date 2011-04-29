@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PdcDownloader</RootNamespace>
     <AssemblyName>PdcDownloader</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -74,6 +75,7 @@
     </ServiceReferenceMetadataStorage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Service References\Mix11\service.edmx" />
     <None Include="Service References\PDC\service.edmx" />
   </ItemGroup>
